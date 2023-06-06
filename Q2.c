@@ -1,0 +1,138 @@
+#include<stdio.h>
+#include<stdlib.h>
+#include<string.h>
+//Node declaration for stack and changed its name as QueueNode
+typedef struct Node
+{
+    int pId;
+    char pName[20];
+    int totalSale;
+    char pGrade;
+    struct Node *next;
+}QueueNode;
+//function declaration
+int isEmpty(QueueNode*);
+void display(QueueNode*);
+void push(QueueNode**,QueueNode**,int,int,char,char*);
+void pop(QueueNode**,QueueNode**,int);
+
+int main()
+{
+    //required variables declarations
+    QueueNode *left = NULL,*right = NULL;
+    int data,key,choice = 0;
+    char name[20],grade;
+    int pid,totalsale;
+    do{
+        printf("\n1.PUSH\n2.POP\n3.DISPLAY\n4.EXIT");
+        printf("\nEnter your choice:- ");
+        scanf("%d",&choice);
+        switch (choice)
+        {
+            case 1:
+                //Ask for data from user
+                printf("\nEnter data to be pushed");
+                
+                printf("\nEnter product id:- ");
+                scanf("%d",&pid);
+                printf("Enter total sale of product:- ");
+                scanf("%d", &totalsale);
+                fflush(stdin);
+                printf("Enter product grade:- ");
+                grade = (char) getchar();
+                fflush(stdin);
+                printf("Enter name of product:-");
+                gets(name);
+                //Function call
+                push(&left,&right,pid,totalsale,grade,name);
+                break;
+            case 2:
+                //Checking underflow
+                if(isEmpty(left)){
+                    printf("\nQueue underflow.");
+                }else{
+                    //Function call
+                    printf("\nEnter key to delete:- ");
+                    scanf("%d",&key);
+                    pop(&left,&right,key);
+                }
+                break;
+            case 3:
+                //Checking underflow
+                if(isEmpty(left)){
+                    printf("\nQueue underflow.");
+                }else{
+                    //function call
+                    display(left);
+                }
+                break;
+            case 4:
+                exit(0);
+                break;
+        }
+    }while(1);
+    return 0;
+}
+//isEmpty function return one if there is no any elements in list
+int isEmpty(QueueNode *top){
+    return top == NULL;
+}
+
+//push is used to push element in last of lis
+void push(QueueNode **head,QueueNode **tail,int id,int ts, char g, char *name){
+    QueueNode *temp = (QueueNode *) malloc(sizeof(QueueNode));
+    if(temp == NULL){
+        printf("\nNot enough memory.");
+    }else{
+        temp->pId = id;
+        temp->totalSale = ts;
+        temp->pGrade = g;
+        strcpy(temp->pName, name);
+        temp->next = NULL;
+        if(*head == NULL){
+            *head = *tail = temp;
+        }else{
+            (*tail)->next = temp;
+            *tail = temp;
+        }
+    }
+}
+//traverse each element and print it
+void display(QueueNode *left){
+    printf("\nElements of Linked List are:- ");
+    printf("\nID\tNAME\tGrade\tTotalSale\n ");
+    while (left != NULL)
+    {
+        printf("%d\t%s\t%c\t%d",left->pId,left->pName,left->pGrade,left->totalSale);
+        left = left->next;
+        printf("\n");
+    }
+}
+//pop is used to remove last element from list
+void pop(QueueNode **head, QueueNode **tail,int key){
+    QueueNode *temp = NULL;
+    QueueNode *curr = NULL;
+    curr = temp = *head;
+    if((*head)->pId == key){
+        *head = (*head)->next;
+        if(*head == NULL)
+            *tail = NULL;
+    }else {
+        while(curr->next->pId != key && curr->next != NULL){
+            curr = curr->next;
+        }
+        if (curr->next->pId == key && curr->next == *tail)
+        { 
+            temp = curr->next;
+            curr->next = temp->next;
+            *tail = curr;
+        }else if(curr->next->pId == key && curr->next != *tail){
+            temp = curr->next;
+            curr->next = temp->next;
+        }else{
+            printf("\nProduct with ID %d is not present in the list.",key);
+        }
+    }
+    printf("\nProduct to be poped is %d.",temp->pId);
+    free(temp);
+} 
